@@ -16,12 +16,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.view.View;
+import android.view.LayoutInflater;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 import static android.R.attr.button;
+import static android.R.attr.inputType;
 
 
 public class MainActivity extends AppCompatActivity
@@ -65,6 +72,21 @@ public class MainActivity extends AppCompatActivity
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, names);
 
+        lvMain.setOnItemLongClickListener(new OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                testClick(position,id);
+
+
+                //Intent newActivity = new Intent(this, superleague.class);
+                //startActivity(newActivity);
+
+                //  Intent newActivity = new Intent(view.getContext(),agones.class);
+                //     startActivity(newActivity);
+                return true;
+            }
+        });
+
         // присваиваем адаптер списку
         lvMain.setAdapter(adapter);
 
@@ -72,6 +94,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void testClick(int position,long id)
+    {
+        String b = String.format("You clicked %s button "+ id,names[position]);
+        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -132,16 +159,34 @@ public class MainActivity extends AppCompatActivity
 
     public void open(View view){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("test");
-                alertDialogBuilder.setPositiveButton("yes",
+        //LayoutInflater factory = LayoutInflater.from(this);
+        //final View textEntryView = factory.inflate(R.layout.add_dialog,null);
+        LinearLayout ll = new LinearLayout(this);
+
+        alertDialogBuilder.setTitle("Add item to list");
+        //alertDialogBuilder.setView(textEntryView);
+        final EditText item =  new EditText(this);
+        item.setHint("Item");
+        item.setFocusable(true);
+        item.setClickable(true);
+        item.setFocusableInTouchMode(true);
+        item.setSelectAllOnFocus(true);
+        item.setSingleLine(true);
+       // item.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.addView(item);
+        alertDialogBuilder.setView(ll);
+
+                alertDialogBuilder.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                Toast.makeText(MainActivity.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+                                String b = String.format("You added %s item to the list",item.getText());
+                                Toast.makeText(MainActivity.this,b,Toast.LENGTH_LONG).show();
                             }
                         });
 
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
