@@ -1,11 +1,13 @@
-package com.example.reagantakeuchi.hci2_inventorymanager;
+package com.comp4020.listproject;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * To work on unit tests, switch the Test Artifact in the Build Variants view.
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
     @Test
