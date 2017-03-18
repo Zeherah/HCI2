@@ -27,6 +27,8 @@ import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import java.util.ArrayList;
+
 import static android.R.attr.button;
 import static android.R.attr.inputType;
 
@@ -34,7 +36,7 @@ import static android.R.attr.inputType;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String[] names = { "Millk", "Sugar", "Juice", "Cat Food" };
+    ArrayList<String> names = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        names.add("Milk");
+        names.add("Sugar");
+        names.add("Juice");
+        names.add("Cat Food");
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, names);
 
+
         lvMain.setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -93,10 +100,16 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+    public void update_Adapter()
+    {
+        ListView lvMain = (ListView) findViewById(R.id.lvMain);
 
+        int a;
+        //return true;
+    }
     public void testClick(int position,long id)
     {
-        String b = String.format("You clicked %s button "+ id,names[position]);
+        String b = String.format("You clicked %s button "+ id,names.get(position));
         Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
     }
     @Override
@@ -183,13 +196,18 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface arg0, int arg1) {
                                 String b = String.format("You added %s item to the list",item.getText());
                                 Toast.makeText(MainActivity.this,b,Toast.LENGTH_LONG).show();
+                                String a = item.getText().toString();
+                                names.add(a);
+                                //somehow need your array adapter here adapter.
+                                //adapter.notifyDataSetChanged(); has to be called to update the main list.
+
                             }
                         });
 
         alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+                dialog.cancel();
             }
         });
 
