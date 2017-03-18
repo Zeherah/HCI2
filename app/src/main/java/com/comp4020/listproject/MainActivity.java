@@ -1,11 +1,13 @@
 package com.comp4020.listproject;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,28 +17,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.view.View;
-import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import java.util.ArrayList;
-
-import static android.R.attr.button;
-import static android.R.attr.inputType;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ArrayList<String> names = new ArrayList<String>();
+
+    // создаем адаптер
+    MyCustomAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +80,16 @@ public class MainActivity extends AppCompatActivity
         // находим список
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
 
-        // создаем адаптер
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, names);
+        adapter = new MyCustomAdapter(this, R.layout.list_item, names);
 
+//        // создаем адаптер
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_list_item_1, names);
 
         lvMain.setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                testClick(position,id);
+                itemDelete(position,id);
 
 
                 //Intent newActivity = new Intent(this, superleague.class);
@@ -107,10 +114,42 @@ public class MainActivity extends AppCompatActivity
         int a;
         //return true;
     }
-    public void testClick(int position,long id)
+//    public void itemDelete(int position,long id)
+//    {
+//        String b = String.format("You removed %s button "+ id,names.get(position));
+//
+//        names.remove(position);
+//        adapter.notifyDataSetChanged();// has to be called to update the main list.
+//
+//        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+//    }
+    public void itemDelete(final int position, final long id)
     {
-        String b = String.format("You clicked %s button "+ id,names.get(position));
-        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(String.format("Remove \"%s\" from the list?", names.get(position)));
+
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        String b = String.format("You removed \"%s\"",names.get(position));
+
+                        names.remove(position);
+                        adapter.notifyDataSetChanged();// has to be called to update the main list.
+
+                        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     @Override
     public void onBackPressed() {
@@ -199,7 +238,7 @@ public class MainActivity extends AppCompatActivity
                                 String a = item.getText().toString();
                                 names.add(a);
                                 //somehow need your array adapter here adapter.
-                                //adapter.notifyDataSetChanged(); has to be called to update the main list.
+                                adapter.notifyDataSetChanged();// has to be called to update the main list.
 
                             }
                         });
@@ -213,5 +252,42 @@ public class MainActivity extends AppCompatActivity
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+    public class MyCustomAdapter extends ArrayAdapter implements ListAdapter {
+        private ArrayList<String> list = new ArrayList<String>();
+        private Context context;
+
+        public MyCustomAdapter(Context context, int list_item, ArrayList<String> list) {
+            super(context, list_item, list);
+            this.list = list;
+            this.context = context;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if (view == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.list_item, null);
+            }
+
+            //Handle TextView and display string from your list
+            TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
+            listItemText.setText(list.get(position));
+
+            //Handle buttons and add onClickListeners
+            ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
+
+            imageButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    //do something
+                    list.remove(position); //or some other task
+                    notifyDataSetChanged();
+                }
+            });
+
+            return view;
+        }
     }
 }
