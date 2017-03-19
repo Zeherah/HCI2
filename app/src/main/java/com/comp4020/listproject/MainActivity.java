@@ -79,14 +79,15 @@ public class MainActivity extends AppCompatActivity
 
         // находим список
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
-
+        lvMain.setLongClickable(true);
+        lvMain.setItemsCanFocus(true);
         adapter = new MyCustomAdapter(this, R.layout.list_item, names);
 
 //        // создаем адаптер
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 //                android.R.layout.simple_list_item_1, names);
 
-        lvMain.setOnItemLongClickListener(new OnItemLongClickListener() {
+        lvMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 itemDelete(position,id);
@@ -233,13 +234,15 @@ public class MainActivity extends AppCompatActivity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                String b = String.format("You added %s item to the list",item.getText());
-                                Toast.makeText(MainActivity.this,b,Toast.LENGTH_LONG).show();
-                                String a = item.getText().toString();
-                                names.add(a);
-                                //somehow need your array adapter here adapter.
-                                adapter.notifyDataSetChanged();// has to be called to update the main list.
-
+                                //String a = item.getText();
+                                if(!item.getText().toString().isEmpty()) {
+                                    String b = String.format("You added %s item to the list", item.getText());
+                                    Toast.makeText(MainActivity.this, b, Toast.LENGTH_LONG).show();
+                                    String a = item.getText().toString();
+                                    names.add(a);
+                                    //somehow need your array adapter here adapter.
+                                    adapter.notifyDataSetChanged();// has to be called to update the main list.
+                                }
                             }
                         });
 
@@ -274,7 +277,16 @@ public class MainActivity extends AppCompatActivity
             //Handle TextView and display string from your list
             TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
             listItemText.setText(list.get(position));
+            //listItemText.setClickable(true);
 
+            listItemText.setOnLongClickListener(new View.OnLongClickListener (){
+                public boolean onLongClick(View v) {
+                    String b = String.format("Long pressed on %s item",list.get(position));
+                    Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+                    return true;
+                }
+
+            });
             //Handle buttons and add onClickListeners
             ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
 
