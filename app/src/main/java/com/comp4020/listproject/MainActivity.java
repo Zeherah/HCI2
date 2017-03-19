@@ -3,9 +3,11 @@ package com.comp4020.listproject;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         lvMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                itemDelete(position,id);
+                itemDelete(position);
 
 
                 //Intent newActivity = new Intent(this, superleague.class);
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 //
 //        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
 //    }
-    public void itemDelete(final int position, final long id)
+    public void itemDelete(final int position)
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(String.format("Remove \"%s\" from the list?", names.get(position)));
@@ -281,21 +285,59 @@ public class MainActivity extends AppCompatActivity
 
             listItemText.setOnLongClickListener(new View.OnLongClickListener (){
                 public boolean onLongClick(View v) {
-                    String b = String.format("Long pressed on %s item",list.get(position));
-                    Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
+//                    String b = String.format("Long pressed on %s item",list.get(position));
+                    itemDelete(position);
+//                    Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
                     return true;
                 }
 
             });
-            //Handle buttons and add onClickListeners
-            ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
+//            //Handle buttons and add onClickListeners
+//            ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
+//
+//            imageButton.setOnClickListener(new View.OnClickListener(){
+//                @Override
+//                public void onClick(View v) {
+//                    //do something
+//
+//                    ((ImageButton)v).setImageResource(R.drawable.icon_red_th);
+////                    list.remove(position); //or some other task
+////                    notifyDataSetChanged();
+//                }
+//            });
 
-            imageButton.setOnClickListener(new View.OnClickListener(){
+            Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
+//            SpinnerAdapter = new SpinnerAdapter();
+            List<String> priorities = new ArrayList<String>();
+            priorities.add("High");
+            priorities.add("Medium-high");
+            priorities.add("Medium");
+            priorities.add("Low");
+
+            ArrayAdapter<String> dataAdapter;
+            dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, priorities);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(dataAdapter);
+            spinner.setSelection(3);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
-                public void onClick(View v) {
-                    //do something
-                    list.remove(position); //or some other task
-                    notifyDataSetChanged();
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(position == 0){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
+                    }else if(position == 1){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
+                    }else if(position == 2){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
+                    }else if(position == 3){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_green_th));
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
                 }
             });
 
