@@ -308,14 +308,14 @@ public class MainActivity extends AppCompatActivity
 
             Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
 //            SpinnerAdapter = new SpinnerAdapter();
-            List<String> priorities = new ArrayList<String>();
-            priorities.add("High");
-            priorities.add("Medium-high");
-            priorities.add("Medium");
-            priorities.add("Low");
+            List<String> levels = new ArrayList<String>();
+            levels.add("High");
+            levels.add("Medium-high");
+            levels.add("Medium");
+            levels.add("Low");
 
             ArrayAdapter<String> dataAdapter;
-            dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, priorities);
+            dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, levels);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(dataAdapter);
             spinner.setSelection(3);
@@ -325,13 +325,13 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if(position == 0){
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
-                    }else if(position == 1){
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
-                    }else if(position == 2){
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
-                    }else if(position == 3){
                         ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_green_th));
+                    }else if(position == 1){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
+                    }else if(position == 2){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
+                    }else if(position == 3){
+                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
                     }
                 }
 
