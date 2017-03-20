@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get the Intent that started this activity and extract the string
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(GroceryList.EXTRA_MESSAGE);
+        names.add(message);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         names.add("Milk");
@@ -202,6 +208,9 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN,
                     KeyEvent.KEYCODE_CAMERA));
             sendOrderedBroadcast(intent, null);
+        } else if (id == R.id.nav_grocery_list){
+            Intent intent = new Intent(MainActivity.this, GroceryList.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_gallery) {
 

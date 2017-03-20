@@ -9,4 +9,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="home_inventory_manager">Home Inventory Manager</string>
+    <string name="edit_item">Enter a item</string>
+    <string name="button_add_inventory">Add To Inventory</string>
 </resources>
