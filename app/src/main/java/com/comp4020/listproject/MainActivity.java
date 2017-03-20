@@ -36,15 +36,16 @@ import android.app.AlertDialog;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.xmlpull.v1.XmlSerializer;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ArrayList<String> names = new ArrayList<String>();
-
+    xmlData xml;
     // создаем адаптер
     MyCustomAdapter adapter;
 
@@ -54,11 +55,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        /*
         names.add("Milk");
         names.add("Sugar");
         names.add("Juice");
         names.add("Cat Food");
+        */
 
+        xml = new xmlData(this);
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -85,7 +89,8 @@ public class MainActivity extends AppCompatActivity
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
         lvMain.setLongClickable(true);
         lvMain.setItemsCanFocus(true);
-        adapter = new MyCustomAdapter(this, R.layout.list_item, names);
+        //adapter = new MyCustomAdapter(this, R.layout.list_item, names);
+        adapter = new MyCustomAdapter(this, R.layout.list_item, xml.getList());
 
 //        // создаем адаптер
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -131,15 +136,15 @@ public class MainActivity extends AppCompatActivity
     public void itemDelete(final int position)
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle(String.format("Remove \"%s\" from the list?", names.get(position)));
+        alertDialogBuilder.setTitle(String.format("Remove \"%s\" from the list?", xml.getName(position)));
 
         alertDialogBuilder.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        String b = String.format("You removed \"%s\"",names.get(position));
-
-                        names.remove(position);
+                        String b = String.format("You removed \"%s\"",xml.getName(position));
+                        xml.remove(position);
+                        //names.remove(position);
                         adapter.notifyDataSetChanged();// has to be called to update the main list.
 
                         Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
@@ -243,7 +248,8 @@ public class MainActivity extends AppCompatActivity
                                     String b = String.format("You added %s item to the list", item.getText());
                                     Toast.makeText(MainActivity.this, b, Toast.LENGTH_LONG).show();
                                     String a = item.getText().toString();
-                                    names.add(a);
+                                    xml.add(a);
+                                    //names.add(a);
                                     //somehow need your array adapter here adapter.
                                     adapter.notifyDataSetChanged();// has to be called to update the main list.
                                 }
@@ -318,19 +324,27 @@ public class MainActivity extends AppCompatActivity
             dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, levels);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(dataAdapter);
-            spinner.setSelection(3);
+            int sel = xml.getLevel(position);
+            if(sel < 4)
+                spinner.setSelection(sel);
+            else
+                spinner.setSelection(0);
 
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if(position == 0){
+                        xml.setLevel(position,0);
                         ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_green_th));
                     }else if(position == 1){
+                        xml.setLevel(position,1);
                         ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
                     }else if(position == 2){
+                        xml.setLevel(position, 2);
                         ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
                     }else if(position == 3){
+                        xml.setLevel(position,3);
                         ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
                     }
                 }

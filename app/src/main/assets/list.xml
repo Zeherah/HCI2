@@ -1,0 +1,18 @@
+<g_list>
+    <g_list_item>
+		<name>Milk</name>
+		<level>3</level>
+    </g_list_item>
+	<g_list_item>
+		<name>Sugar</name>
+		<level>2</level>
+    </g_list_item>
+	<g_list_item>
+		<name>Juice</name>
+		<level>1</level>
+    </g_list_item>
+	<g_list_item>
+		<name>Cat food</name>
+		<level>0</level>
+    </g_list_item>
+</g_list>
