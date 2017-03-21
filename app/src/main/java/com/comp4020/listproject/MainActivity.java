@@ -49,16 +49,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Bundle b = getIntent().getExtras();
-        //ArrayList<String> selectedItems;
-        //selectedItems = getIntent().getExtras().getStringArrayList("SELECTED_ITEMS");
-        if(b != null){
-            selectedItems = (ArrayList<String>)b.getStringArrayList("SELECTED_ITEMS");
-            for(int i=0; i<selectedItems.size();i++){
-                names.add(selectedItems.get(i));
-            }
-        }
-
         /*
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
@@ -127,8 +117,21 @@ public class MainActivity extends AppCompatActivity
         lvMain.setAdapter(adapter);
 
 
+        Bundle b = getIntent().getExtras();
+        //ArrayList<String> selectedItems;
+        //selectedItems = getIntent().getExtras().getStringArrayList("SELECTED_ITEMS");
+        if(b != null){
+            selectedItems = (ArrayList<String>)b.getStringArrayList("SELECTED_ITEMS");
+            for(int i=0; i<selectedItems.size();i++){
+                xml.add(selectedItems.get(i));
+                adapter.notifyDataSetChanged();
+            }
+        }
+
+
 
     }
+
     public void update_Adapter()
     {
         ListView lvMain = (ListView) findViewById(R.id.lvMain);

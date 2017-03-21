@@ -45,11 +45,6 @@ public class GroceryListActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
         lvGrocery.setAdapter(aa);
         //set OnItemClickListener
         lvGrocery.setOnItemClickListener(new AdapterView.OnItemClickListener(){
