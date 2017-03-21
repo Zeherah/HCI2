@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,20 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ArrayList<String> names = new ArrayList<String>();
-
+    ArrayList<String> selectedItems;
     // создаем адаптер
     MyCustomAdapter adapter;
 
@@ -53,11 +46,22 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Bundle b = getIntent().getExtras();
+        //ArrayList<String> selectedItems;
+        //selectedItems = getIntent().getExtras().getStringArrayList("SELECTED_ITEMS");
+        if(b != null){
+            selectedItems = (ArrayList<String>)b.getStringArrayList("SELECTED_ITEMS");
+            for(int i=0; i<selectedItems.size();i++){
+                names.add(selectedItems.get(i));
+            }
+        }
+
+        /*
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String message = intent.getStringExtra(GroceryList.EXTRA_MESSAGE);
+        String message = intent.getStringExtra(GroceryListActivity.EXTRA_MESSAGE);
         names.add(message);
-
+        */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         names.add("Milk");
@@ -209,7 +213,7 @@ public class MainActivity extends AppCompatActivity
                     KeyEvent.KEYCODE_CAMERA));
             sendOrderedBroadcast(intent, null);
         } else if (id == R.id.nav_grocery_list){
-            Intent intent = new Intent(MainActivity.this, GroceryList.class);
+            Intent intent = new Intent(MainActivity.this, GroceryListActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_gallery) {
