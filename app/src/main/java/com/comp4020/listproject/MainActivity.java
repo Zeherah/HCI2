@@ -1,5 +1,8 @@
 package com.comp4020.listproject;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -31,15 +36,20 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.support.v4.app.DialogFragment;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import org.xmlpull.v1.XmlSerializer;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +58,11 @@ public class MainActivity extends AppCompatActivity
     xmlData xml;
     // создаем адаптер
     MyCustomAdapter adapter;
+    int DIALOG_DATE = 1;
+    int myYear = 2011;
+    int myMonth = 02;
+    int myDay = 03;
+    TextView tvDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         names.add("Juice");
         names.add("Cat Food");
         */
+
+
 
         xml = new xmlData(this);
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -87,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         // находим список
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
+        lvMain.setClickable(true);
         lvMain.setLongClickable(true);
         lvMain.setItemsCanFocus(true);
         //adapter = new MyCustomAdapter(this, R.layout.list_item, names);
@@ -95,6 +113,7 @@ public class MainActivity extends AppCompatActivity
 //        // создаем адаптер
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 //                android.R.layout.simple_list_item_1, names);
+
 
         lvMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
@@ -111,7 +130,26 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // присваиваем адаптер списку
+
+
+        lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                showDetails(position);
+
+
+                //Intent newActivity = new Intent(this, superleague.class);
+                //startActivity(newActivity);
+
+                //  Intent newActivity = new Intent(view.getContext(),agones.class);
+                //     startActivity(newActivity);
+
+            }
+        });
+
+
+
+
         lvMain.setAdapter(adapter);
 
 
@@ -161,6 +199,69 @@ public class MainActivity extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+    public void showDetails (final int position){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(String.format("Details", xml.getName(position)));
+        alertDialogBuilder.setMessage(String.format("Item name: %s",xml.getName(position))+"\n"+"Urgency: High");
+
+
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                       arg0.cancel();
+                    }
+                });
+
+        alertDialogBuilder.setNeutralButton("Set Reminder",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showDatePickerDialog(findViewById(android.R.id.content));//finds current view
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+
+
+
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+//    @Override
+//    public Dialog onCreateDialog(Bundle savedInstanceState) {
+//        // Use the current date as the default date in the picker
+//        final Calendar c = Calendar.getInstance();
+//        int year = c.get(Calendar.YEAR);
+//        int month = c.get(Calendar.MONTH);
+//        int day = c.get(Calendar.DAY_OF_MONTH);
+//
+//        // Create a new instance of DatePickerDialog and return it
+//        return new DatePickerDialog(this, this, year, month, day);
+//    }
+//
+//    public void onDateSet(DatePicker view, int year, int month, int day) {
+//        // Do something with the date chosen by the user
+//    }
+//    public void showDatePickerDialog(View v) {
+//        DialogFragment newFragment = new DatePickerFragment();
+//        newFragment.show(getSupportFragmentManager(), "datePicker");
+//    }
+
+
+
+
+
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -266,6 +367,37 @@ public class MainActivity extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+        }
+
+
+    }
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+
+
+
+
     public class MyCustomAdapter extends ArrayAdapter implements ListAdapter {
         private ArrayList<String> list = new ArrayList<String>();
         private Context context;
@@ -288,6 +420,13 @@ public class MainActivity extends AppCompatActivity
             TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
             listItemText.setText(list.get(position));
             //listItemText.setClickable(true);
+
+            listItemText.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    showDetails(position);
+
+                }
+            });
 
             listItemText.setOnLongClickListener(new View.OnLongClickListener (){
                 public boolean onLongClick(View v) {
