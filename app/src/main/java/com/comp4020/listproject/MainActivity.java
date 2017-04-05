@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+//import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,16 +45,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ListView;
+import android.widget.SearchView;
 import org.xmlpull.v1.XmlSerializer;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> selectedItems;
-
+    SearchView editsearch;
+    //android.support.v7.widget.SearchView  editsearch;// = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
     xmlData xml;
     // создаем адаптер
     MyCustomAdapter adapter;
@@ -167,11 +175,22 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         }
-
-
-
+        editsearch = (SearchmmView) findViewById(R.id.search);
+        editsearch.setOnQueryTextListener(this);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String text = newText;
+        adapter.filter(text);
+        return false;
+    }
     public void update_Adapter()
     {
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
@@ -420,14 +439,31 @@ public class MainActivity extends AppCompatActivity
 
     public class MyCustomAdapter extends ArrayAdapter implements ListAdapter {
         private ArrayList<String> list = new ArrayList<String>();
+        private ArrayList<String> arrayList;
         private Context context;
 
         public MyCustomAdapter(Context context, int list_item, ArrayList<String> list) {
             super(context, list_item, list);
             this.list = list;
             this.context = context;
+            this.arrayList = new ArrayList<String>();
+            this.arrayList.addAll(list);
         }
-
+        // Filter Class
+        public void filter(String charText) {
+            charText = charText.toLowerCase(Locale.getDefault());
+            list.clear();
+            if (charText.length() == 0) {
+                list.addAll(arrayList);
+            } else {
+                for (String wp : arrayList) {
+                    if (wp.toLowerCase(Locale.getDefault()).contains(charText)) {
+                        list.add(wp);
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
