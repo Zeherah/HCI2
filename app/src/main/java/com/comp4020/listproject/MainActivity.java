@@ -53,9 +53,12 @@ import org.xmlpull.v1.XmlSerializer;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
+    Boolean initSpin=true;
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> selectedItems;
     SearchView editsearch;
@@ -189,6 +192,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onQueryTextChange(String newText) {
         String text = newText;
         adapter.filter(text);
+        //if(text.equals(""))
+            //adapter.re
+       // adapter.
         return false;
     }
     public void update_Adapter()
@@ -440,8 +446,9 @@ public class MainActivity extends AppCompatActivity
     public class MyCustomAdapter extends ArrayAdapter implements ListAdapter {
         private ArrayList<String> list = new ArrayList<String>();
         private ArrayList<String> arrayList;
+        private ArrayList<String> filt;
         private Context context;
-
+        Boolean setInit = true;
         public MyCustomAdapter(Context context, int list_item, ArrayList<String> list) {
             super(context, list_item, list);
             this.list = list;
@@ -528,20 +535,25 @@ public class MainActivity extends AppCompatActivity
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if(position == 0){
-                        xml.setLevel(position,0);
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_green_th));
-                    }else if(position == 1){
-                        xml.setLevel(position,1);
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
-                    }else if(position == 2){
-                        xml.setLevel(position, 2);
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
-                    }else if(position == 3){
-                        xml.setLevel(position,3);
-                        ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    if(!initSpin) {
+                        xml.setLevel(position, pos);
+
+                        if (pos == 0) {
+                            ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_green_th));
+                        } else if (pos == 1) {
+
+                            ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_yellow_th));
+                        } else if (pos == 2) {
+
+                            ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_orange_th));
+                        } else if (pos == 3) {
+
+                            ((Spinner) parent).setBackground(getDrawable(R.drawable.icon_red_th));
+                        }
                     }
+                    else
+                        initSpin=false;
                 }
 
                 @Override

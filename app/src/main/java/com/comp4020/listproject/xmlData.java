@@ -57,8 +57,19 @@ public class xmlData {
         if(position < levelList.size()) {
             if (level <= 3 && level >= 0) {
                 levelList.set(position, level);
+                xmlUpdate();
             }
         }
+    }
+    public int getLevel(String name)
+    {
+        for(int i =0;i<list.size();i++)
+        {
+            String r = list.get(i);
+            if(r.equals(name))
+                return levelList.get(i);
+        }
+        return 5;
     }
     public int getLevel(int position)
     {
