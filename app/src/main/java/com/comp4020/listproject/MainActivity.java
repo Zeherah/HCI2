@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         }
-        editsearch = (SearchmmView) findViewById(R.id.search);
+        editsearch = (SearchView) findViewById(R.id.search);
         editsearch.setOnQueryTextListener(this);
     }
 
