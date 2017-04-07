@@ -24,6 +24,11 @@
             android:windowSoftInputMode="stateHidden">
 
         </activity>
+        <activity
+            android:name=".AddItemActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
     </application>
 
 </manifest>

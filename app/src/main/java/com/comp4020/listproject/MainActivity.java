@@ -4,8 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -54,25 +57,102 @@ import org.xmlpull.v1.XmlSerializer;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
+        implements NavigationView.OnNavigationItemSelectedListener{//}, SearchView.OnQueryTextListener {
 
     ArrayList<String> names = new ArrayList<String>();
     ArrayList<String> selectedItems;
-    SearchView editsearch;
+    //SearchView editsearch;
     //android.support.v7.widget.SearchView  editsearch;// = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
     xmlData xml;
     // создаем адаптер
-    MyCustomAdapter adapter;
+    //MyCustomAdapter adapter;
     int DIALOG_DATE = 1;
     int myYear = 2011;
     int myMonth = 02;
     int myDay = 03;
     TextView tvDate;
 
+    ListView lvMain;
+    SearchView editsearch;
+    CustomAdapter adapter;
+    ArrayList<Item> items = new ArrayList<>();
+    //DBAdapter dbAdapter = new DBAdapter(this);
+    EditText nameEditText;
+    Button saveBtn,retrieveBtn;
+
+
+    private DBHelper mHelper;
+    private SQLiteDatabase dataBase;
+
+    private ArrayList<String> item_name = new ArrayList<String>();
+    private ArrayList<Integer> item_level = new ArrayList<Integer>();
+
+    private ListView itemList;
+    private AlertDialog.Builder build;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        itemList = (ListView) findViewById(R.id.lvMain) ;
+        mHelper = new DBHelper(this);
+
+        //lvMain.setClickable(true);
+        itemList.setLongClickable(true);
+        //lvMain.setItemsCanFocus(true);
+
+        //add new record
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                Intent i = new Intent(getApplicationContext(), AddItemActivity.class);
+                i.putExtra("update", false);
+                startActivity(i);
+
+            }
+        });
+
+        //long click to delete data
+        itemList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
+
+                build = new AlertDialog.Builder(MainActivity.this);
+                build.setTitle("Delete " + item_name.get(arg2) + " " + item_level.get(arg2));
+                build.setMessage("Do you want to delete ?");
+                build.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Toast.makeText( getApplicationContext(),
+                                item_name.get(arg2) + " "
+                                        + item_level.get(arg2)
+                                        + " is deleted.", Toast.LENGTH_LONG).show();
+
+                        dataBase.delete(
+                                DBHelper.TB_NAME,
+                                DBHelper.NAME + "='"
+                                        + item_name.get(arg2)+"'", null);
+                        displayData();
+                        dialog.cancel();
+                    }
+                });
+
+                build.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = build.create();
+                alert.show();
+
+                return true;
+            }
+        });
 
         /*
         // Get the Intent that started this activity and extract the string
@@ -88,10 +168,33 @@ public class MainActivity extends AppCompatActivity
         names.add("Juice");
         names.add("Cat Food");
         */
+        //dbAdapter.openDB();
+        //dbAdapter.add("Coffee", 0);
+        //dbAdapter.add("Milk", 0);
+        //dbAdapter.add("Sugar", 0);
+        //dbAdapter.add("Tea", 0);
+        //dbAdapter.closeDB();
+/*
+        lvMain = (ListView) findViewById(R.id.lvMain);
+        editsearch = (SearchView) findViewById(R.id.search);
+        adapter = new CustomAdapter(this, items);
+        EditText editText;
+
+        editsearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getItems(newText);
+                return false;
+            }
+        });
+*/
 
 
-
-        xml = new xmlData(this);
+        //xml = new xmlData(this);
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -115,18 +218,18 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // находим список
-        ListView lvMain = (ListView) findViewById(R.id.lvMain);
-        lvMain.setClickable(true);
-        lvMain.setLongClickable(true);
-        lvMain.setItemsCanFocus(true);
+        ///ListView lvMain = (ListView) findViewById(R.id.lvMain);
+        //lvMain.setClickable(true);
+        //lvMain.setLongClickable(true);
+        //lvMain.setItemsCanFocus(true);
         //adapter = new MyCustomAdapter(this, R.layout.list_item, names);
-        adapter = new MyCustomAdapter(this, R.layout.list_item, xml.getList());
+        //adapter = new MyCustomAdapter(this, R.layout.list_item, xml.getList());
 
 //        // создаем адаптер
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 //                android.R.layout.simple_list_item_1, names);
 
-
+/*
         lvMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -141,8 +244,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
-
-
+*/
+/*
 
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -158,11 +261,11 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+*/
 
 
 
-
-        lvMain.setAdapter(adapter);
+        //lvMain.setAdapter(adapter);
 
 
         Bundle b = getIntent().getExtras();
@@ -175,10 +278,65 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         }
-        editsearch = (SearchView) findViewById(R.id.search);
-        editsearch.setOnQueryTextListener(this);
+        //editsearch = (SearchView) findViewById(R.id.search);
+        //editsearch.setOnQueryTextListener(this);
+    }
+    @Override
+    protected void onResume() {
+        displayData();
+        super.onResume();
     }
 
+    /**
+     * displays data from SQLite
+     */
+    private void displayData() {
+        dataBase = mHelper.getWritableDatabase();
+        Cursor mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.TB_NAME, null);
+
+
+        item_name.clear();
+        item_level.clear();
+        if (mCursor.moveToFirst()) {
+            do {
+                item_name.add(mCursor.getString(mCursor.getColumnIndex(DBHelper.NAME)));
+                item_level.add(Integer.parseInt(mCursor.getString(mCursor.getColumnIndex(DBHelper.LEVEL))));
+
+            } while (mCursor.moveToNext());
+        }
+        DisplayAdapter disadpt = new DisplayAdapter(MainActivity.this, item_name, item_level);
+        itemList.setAdapter(disadpt);
+        mCursor.close();
+    }
+
+
+
+
+
+
+    /*
+    public void getItems(String searchTerm) {
+        items.clear();
+        DBAdapter db=new DBAdapter(this);
+        db.openDB();
+        Item i=null;
+        Cursor c=db.retrieve(searchTerm);
+        while (c.moveToNext())
+        {
+            String name=c.getString(0);
+            int level=c.getInt(1);
+            i=new Item();
+            i.setName(name);
+            i.setLevel(level);
+            items.add(i);
+        }
+        db.closeDB();
+        lvMain.setAdapter(adapter);
+    }
+
+*/
+
+    /*
     @Override
     public boolean onQueryTextSubmit(String query) {
 
@@ -190,7 +348,7 @@ public class MainActivity extends AppCompatActivity
         String text = newText;
         adapter.filter(text);
         return false;
-    }
+    }*/
     public void update_Adapter()
     {
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
@@ -235,7 +393,7 @@ public class MainActivity extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-
+/*
     public void showDetails (final int position){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(String.format("Details", xml.getName(position)));
@@ -271,7 +429,7 @@ public class MainActivity extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-
+*/
 //    @Override
 //    public Dialog onCreateDialog(Bundle savedInstanceState) {
 //        // Use the current date as the default date in the picker
@@ -358,7 +516,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+/*
     public void open(View view){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         //LayoutInflater factory = LayoutInflater.from(this);
@@ -388,7 +546,11 @@ public class MainActivity extends AppCompatActivity
                                     String b = String.format("You added %s item to the list", item.getText());
                                     Toast.makeText(MainActivity.this, b, Toast.LENGTH_LONG).show();
                                     String a = item.getText().toString();
-                                    xml.add(a);
+                                    dbAdapter.openDB();
+                                    dbAdapter.add(item.getText().toString(),0);
+                                    dbAdapter.closeDB();
+                                    this.getItems()
+                                    //xml.add(a);
                                     //names.add(a);
                                     //somehow need your array adapter here adapter.
                                     adapter.notifyDataSetChanged();// has to be called to update the main list.
@@ -493,6 +655,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
             });
+            return view;
 //            //Handle buttons and add onClickListeners
 //            ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
 //
@@ -506,11 +669,11 @@ public class MainActivity extends AppCompatActivity
 ////                    notifyDataSetChanged();
 //                }
 //            });
-
+/*remove spinner temoporaily
             Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
 //            SpinnerAdapter = new SpinnerAdapter();
             List<String> levels = new ArrayList<String>();
-            levels.add("High");
+            levels.add("High");nameTxtnameTxt
             levels.add("Medium-high");
             levels.add("Medium");
             levels.add("Low");
@@ -550,7 +713,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-            return view;
         }
     }
+    */
 }
