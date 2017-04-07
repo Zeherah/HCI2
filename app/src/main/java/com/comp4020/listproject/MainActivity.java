@@ -73,29 +73,31 @@ public class MainActivity extends AppCompatActivity
     TextView tvDate;
 
     ListView lvMain;
-    SearchView editsearch;
     CustomAdapter adapter;
     ArrayList<Item> items = new ArrayList<>();
     //DBAdapter dbAdapter = new DBAdapter(this);
     EditText nameEditText;
     Button saveBtn,retrieveBtn;
-
-
     private DBHelper mHelper;
+
+
     private SQLiteDatabase dataBase;
-
     private ArrayList<String> item_name = new ArrayList<String>();
+
     private ArrayList<Integer> item_level = new ArrayList<Integer>();
-
     private ListView itemList;
-    private AlertDialog.Builder build;
 
+    private AlertDialog.Builder build;
+    SearchView sv;
+
+    String searchItem = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sv = (SearchView) findViewById(R.id.search);
         itemList = (ListView) findViewById(R.id.lvMain) ;
         mHelper = new DBHelper(this);
 
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity
                                 DBHelper.TB_NAME,
                                 DBHelper.NAME + "='"
                                         + item_name.get(arg2)+"'", null);
-                        displayData();
+                        displayData(searchItem);
                         dialog.cancel();
                     }
                 });
@@ -204,8 +206,6 @@ public class MainActivity extends AppCompatActivity
 //            }
 //        });
         //
-
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -278,22 +278,42 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         }
-        //editsearch = (SearchView) findViewById(R.id.search);
-        //editsearch.setOnQueryTextListener(this);
+
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                displayData(newText);
+                return false;
+            }
+        });
+
+
     }
+
     @Override
     protected void onResume() {
-        displayData();
+        displayData(searchItem);
         super.onResume();
     }
 
     /**
      * displays data from SQLite
      */
-    private void displayData() {
+    private void displayData(String searchTerm) {
         dataBase = mHelper.getWritableDatabase();
-        Cursor mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.TB_NAME, null);
+        Cursor mCursor;
 
+        if(searchTerm != null && searchTerm.length()>0){
+            String sql="SELECT * FROM "+DBHelper.TB_NAME+" WHERE "+DBHelper.NAME+" LIKE '%"+searchTerm+"%'";
+            mCursor=dataBase.rawQuery(sql,null);
+        }else{
+
+            mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.TB_NAME, null);
+        }
 
         item_name.clear();
         item_level.clear();

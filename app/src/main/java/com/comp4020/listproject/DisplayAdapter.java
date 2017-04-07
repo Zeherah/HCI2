@@ -65,4 +65,5 @@ public class DisplayAdapter extends BaseAdapter {
         TextView txt_level;
     }
 
+
 }
