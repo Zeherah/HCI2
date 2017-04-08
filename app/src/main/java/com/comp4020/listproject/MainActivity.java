@@ -7,6 +7,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -84,9 +85,9 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase dataBase;
     private ArrayList<String> item_name = new ArrayList<String>();
 
-    private ArrayList<Integer> item_level = new ArrayList<Integer>();
+    private ArrayList<String> item_level = new ArrayList<String>();
     private ListView itemList;
-
+    //private Spinner spinner;
     private AlertDialog.Builder build;
     SearchView sv;
 
@@ -99,8 +100,16 @@ public class MainActivity extends AppCompatActivity
 
         sv = (SearchView) findViewById(R.id.search);
         itemList = (ListView) findViewById(R.id.lvMain) ;
-        mHelper = new DBHelper(this);
+        //spinner = (Spinner) findViewById(R.id.spinner);
 
+        Resources res = getResources();
+        //ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, res.getStringArray(R.array.spinner_options));
+        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        //spinner.setAdapter(dataAdapter);
+
+        mHelper = new DBHelper(this);
         //lvMain.setClickable(true);
         itemList.setLongClickable(true);
         //lvMain.setItemsCanFocus(true);
@@ -263,8 +272,6 @@ public class MainActivity extends AppCompatActivity
         });
 */
 
-
-
         //lvMain.setAdapter(adapter);
 
 
@@ -320,7 +327,7 @@ public class MainActivity extends AppCompatActivity
         if (mCursor.moveToFirst()) {
             do {
                 item_name.add(mCursor.getString(mCursor.getColumnIndex(DBHelper.NAME)));
-                item_level.add(Integer.parseInt(mCursor.getString(mCursor.getColumnIndex(DBHelper.LEVEL))));
+                item_level.add(mCursor.getString(mCursor.getColumnIndex(DBHelper.LEVEL)));
 
             } while (mCursor.moveToNext());
         }
@@ -328,11 +335,6 @@ public class MainActivity extends AppCompatActivity
         itemList.setAdapter(disadpt);
         mCursor.close();
     }
-
-
-
-
-
 
     /*
     public void getItems(String searchTerm) {
@@ -443,9 +445,6 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
-
-
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -469,11 +468,6 @@ public class MainActivity extends AppCompatActivity
 //        DialogFragment newFragment = new DatePickerFragment();
 //        newFragment.show(getSupportFragmentManager(), "datePicker");
 //    }
-
-
-
-
-
 
 
     @Override
@@ -689,9 +683,8 @@ public class MainActivity extends AppCompatActivity
 ////                    notifyDataSetChanged();
 //                }
 //            });
-/*remove spinner temoporaily
+*//*
             Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
-//            SpinnerAdapter = new SpinnerAdapter();
             List<String> levels = new ArrayList<String>();
             levels.add("High");nameTxtnameTxt
             levels.add("Medium-high");

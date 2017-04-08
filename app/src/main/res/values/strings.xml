@@ -12,4 +12,13 @@
     <string name="edit_item">Enter a item</string>
     <string name="button_add_inventory">Finish Shopping</string>
     <string name="button_add_grocery">Add To Grocery List</string>
+    <string name="prompt">Add plz</string>
+    <string-array name = "spinner_options">
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+        <item>Very low</item>
+    </string-array>
+
+
 </resources>
