@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F3CAE5"
-    android:orientation="vertical"
-    android:padding="5dp" >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/frst_txtV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Item name"
-            android:textColor="#000" />
-
-        <EditText
-            android:id="@+id/frst_editTxt"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/frst_txtV" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/lst_txtV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Item level"
-            android:textColor="#000" />
-
-        <EditText
-            android:id="@+id/last_editTxt"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/lst_txtV" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/save_btn"
+    <TextView
+        android:text="Item name: "
+        android:id="@+id/item_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="Add"
-        android:textColor="#000" />
+        android:textSize="25.0dip"
+        android:textColor="#000000"
+        android:layout_marginBottom="10.0dip"
+        />
+    <EditText
+        android:id="@+id/item_name_editTxt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/item_name_tv"
+        android:layout_marginBottom="10.0dip"/>
+    <Spinner
+        android:id="@+id/add_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:layout_marginBottom="20dip"
+        android:layout_marginEnd="11dip"
+        android:textSize="25dip"
+        android:entries="@array/spinner_options"
+        android:layout_below="@id/item_name_editTxt"
+        />
 
-</LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@android:drawable/bottom_bar"
+        android:paddingLeft="4.0dip"
+        android:paddingTop="4.0dip"
+        android:paddingRight="4.0dip"
+        android:paddingBottom="1.0dip"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_below="@+id/add_spinner">
+
+        <Button
+            android:id="@+id/add_btn"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Cancel"
+            android:layout_weight="1.0" />
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Add"
+            android:layout_weight="1.0" />
+
+    </LinearLayout>
+</RelativeLayout>

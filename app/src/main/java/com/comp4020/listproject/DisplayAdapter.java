@@ -125,7 +125,7 @@ public class DisplayAdapter extends BaseAdapter implements AdapterView.OnItemSel
         //switch(level.get(pos)) {
             //case 0: mHolder.spinner.setBackgroundResource(R.drawable.icon_red_th);
                 //break;
-            //case 1: mHolder.spinner.setBackgroundResource(R.drawable.icon_yellow_th);
+            //case 1: mHolder.spinner.setBackgrspinner.setOnClickListener(this);oundResource(R.drawable.icon_yellow_th);
                // break;
            // case 2: mHolder.spinner.setBackgroundResource(R.drawable.icon_orange_th);
            //     break;
@@ -180,8 +180,7 @@ public class DisplayAdapter extends BaseAdapter implements AdapterView.OnItemSel
         View parentView = (View) parent.getParent();
         TextView txtView = (TextView) parentView.findViewById(R.id.list_item_string);
         String sel = txtView.getText().toString();
-        Toast.makeText(parent.getContext(), "Selected: " + sel, Toast.LENGTH_LONG).show();
-    //YES!
+        //Toast.makeText(parent.getContext(), "Selected: " + sel, Toast.LENGTH_LONG).show();
         //now access databuse using this as key and update color
 
 
