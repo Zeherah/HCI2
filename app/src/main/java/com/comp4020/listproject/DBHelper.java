@@ -1,9 +1,14 @@
 package com.comp4020.listproject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 /**
  * Created by brett on 07/04/17.
@@ -36,6 +41,24 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String gDROP_TB="DROP TABLE IF EXISTS "+gTB_NAME;
 
 
+    String[] groceryTestData = {"apple", "orange", "strawberry", "banana", "grape",
+    "peach", "pear", "cherry", "pineapple", "grapefruit",
+    "mango", "avocado", "kiwi", "watermelon", "lemon",
+    "cantaloupe", "apricot", "papaya", "blackberry", "berry"};
+
+    String[] inventoryTestData = {"common fig", "tangerine", "pomegranate", "coconut", "date palm",
+    "cranberry", "lychee", "persimmon", "passion fruit", "gooseberry",
+    "kumquat", "durian", "carambola", "pomelo", "olive",
+    "quince", "purple mangosteen", "cherimoya", "prune", "pitaya",
+    "loquat", "soursop", "asian pear", "jujube", "boysenberry",
+    "tangelo", "longan", "horned melon", "raspberry", "lime",
+    "guava", "potato", "carrot", "spinach", "broccoli",
+    "pea", "cabbage", "tomato", "onion", "cauliflower",
+    "maize", "garden asparagus", "lettuce", "kale", "cucumber",
+    "celery", "radish", "turnip", "eggplant", "artichoke"};
+
+    String[] levelChoice = {"High", "Medium", "Low", "Very low"};
+
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -46,6 +69,25 @@ public class DBHelper extends SQLiteOpenHelper {
         {
             db.execSQL(CREATE_TB);
             db.execSQL(gCREATE_TB);
+            ContentValues values=new ContentValues();
+            //dataBase.insert(DBHelper.TB_NAME, null, values);
+            //values.put(DBHelper.NAME,name);
+            //values.put(DBHelper.LEVEL,level );
+            String tstName;
+            String tstLevel;
+            Random rn = new Random();
+            for(int i=0; i<groceryTestData.length; i++){
+                values=new ContentValues();
+                values.put(DBHelper.gNAME,groceryTestData[i]);
+                db.insert(DBHelper.gTB_NAME, null, values);
+            }
+            for(int i=0; i<inventoryTestData.length; i++){
+                values=new ContentValues();
+                values.put(DBHelper.NAME,inventoryTestData[i]);
+                values.put(DBHelper.LEVEL,levelChoice[rn.nextInt(4)]);
+                db.insert(DBHelper.TB_NAME, null, values);
+            }
+
         }catch (SQLException e)
         {
             e.printStackTrace();

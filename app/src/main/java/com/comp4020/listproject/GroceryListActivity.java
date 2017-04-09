@@ -49,9 +49,9 @@ public class GroceryListActivity extends AppCompatActivity{
 
     private AlertDialog.Builder build;
 
-    //SearchView sv;
+    SearchView sv;
 
-    //String searchItem = "";
+    String searchItem = "";
 
     ArrayList<String> selectedItems = new ArrayList<String>();
     //List<String> items = new ArrayList<String>();
@@ -61,7 +61,7 @@ public class GroceryListActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_list);
 
-        //sv = (SearchView) findViewById(R.id.search);
+        sv = (SearchView) findViewById(R.id.gsearch);
         editItem = (EditText) findViewById(R.id.edit_item);
 
         itemList = (ListView) findViewById(R.id.lvGroceryList);
@@ -88,7 +88,7 @@ public class GroceryListActivity extends AppCompatActivity{
                 //items.add(item);
                 //aa.notifyDataSetChanged();
                 editItem.setText("");
-                displayData();
+                displayData(searchItem);
 
             }
         });
@@ -139,7 +139,7 @@ public class GroceryListActivity extends AppCompatActivity{
                                 DBHelper.gTB_NAME,
                                 DBHelper.gNAME + "='"
                                         + item_name.get(arg2)+"'", null);
-                        displayData();
+                        displayData(searchItem);
                         dialog.cancel();
                     }
                 });
@@ -168,7 +168,17 @@ public class GroceryListActivity extends AppCompatActivity{
             }
 
         });
-
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                displayData(newText);
+                return false;
+            }
+        });
 
     }
 
@@ -203,17 +213,23 @@ public class GroceryListActivity extends AppCompatActivity{
     }
     @Override
     protected void onResume() {
-        displayData();
+        displayData(searchItem);
         super.onResume();
     }
     /**
      * displays data from SQLite
      */
-    private void displayData() {
+    private void displayData(String searchTerm) {
         dataBase = mHelper.getWritableDatabase();
         Cursor mCursor;
 
-        mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.gTB_NAME, null);
+        if(searchTerm != null && searchTerm.length()>0){
+            String sql="SELECT * FROM "+DBHelper.gTB_NAME+" WHERE "+DBHelper.gNAME+" LIKE '%"+searchTerm+"%'";
+            mCursor=dataBase.rawQuery(sql,null);
+        }else{
+
+            mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.gTB_NAME, null);
+        }
 
         item_name.clear();
 
