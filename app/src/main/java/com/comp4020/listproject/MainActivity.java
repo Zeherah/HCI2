@@ -60,25 +60,25 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{//}, SearchView.OnQueryTextListener {
 
-    ArrayList<String> names = new ArrayList<String>();
-    ArrayList<String> selectedItems;
+    //ArrayList<String> names = new ArrayList<String>();
+    //ArrayList<String> selectedItems;
     //SearchView editsearch;
     //android.support.v7.widget.SearchView  editsearch;// = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
-    xmlData xml;
+    //xmlData xml;
     // создаем адаптер
     //MyCustomAdapter adapter;
-    int DIALOG_DATE = 1;
-    int myYear = 2011;
-    int myMonth = 02;
-    int myDay = 03;
-    TextView tvDate;
+    //int DIALOG_DATE = 1;
+    //int myYear = 2011;
+    //int myMonth = 02;
+    //int myDay = 03;
+    //TextView tvDate;
 
-    ListView lvMain;
-    CustomAdapter adapter;
-    ArrayList<Item> items = new ArrayList<>();
+    //ListView lvMain;
+    //CustomAdapter adapter;
+    //ArrayList<Item> items = new ArrayList<>();
     //DBAdapter dbAdapter = new DBAdapter(this);
-    EditText nameEditText;
-    Button saveBtn,retrieveBtn;
+    //EditText nameEditText;
+    //Button saveBtn,retrieveBtn;
     private DBHelper mHelper;
 
 
@@ -99,10 +99,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         sv = (SearchView) findViewById(R.id.search);
+
         itemList = (ListView) findViewById(R.id.lvMain) ;
         //spinner = (Spinner) findViewById(R.id.spinner);
 
-        Resources res = getResources();
+        //Resources res = getResources();
         //ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, res.getStringArray(R.array.spinner_options));
         //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
 
                 build = new AlertDialog.Builder(MainActivity.this);
-                build.setTitle("Delete " + item_name.get(arg2) + " " + item_level.get(arg2));
+                build.setTitle("Delete " + item_name.get(arg2) + ", Inventory level:" + item_level.get(arg2));
                 build.setMessage("Do you want to delete ?");
                 build.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
 
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity
 
         //lvMain.setAdapter(adapter);
 
-
+/*
         Bundle b = getIntent().getExtras();
         //ArrayList<String> selectedItems;
         //selectedItems = getIntent().getExtras().getStringArrayList("SELECTED_ITEMS");
@@ -285,7 +286,7 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         }
-
+*/
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -387,6 +388,7 @@ public class MainActivity extends AppCompatActivity
 //
 //        Toast.makeText(MainActivity.this,b, Toast.LENGTH_LONG).show();
 //    }
+    /*
     public void itemDelete(final int position)
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -414,7 +416,7 @@ public class MainActivity extends AppCompatActivity
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
+    }*/
 /*
     public void showDetails (final int position){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);

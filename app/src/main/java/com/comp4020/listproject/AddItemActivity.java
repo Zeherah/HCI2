@@ -37,7 +37,13 @@ public class AddItemActivity extends Activity implements OnClickListener {
         btn_cancel=(Button)findViewById(R.id.cancel_btn);
         edit_name=(EditText)findViewById(R.id.item_name_editTxt);
         add_spinner=(Spinner)findViewById(R.id.add_spinner);
-        //edit_last=(EditText)findViewById(R.id.last_editTxt);
+        //edit_last=(EditText)find
+        // mHelper = new DBHelper(this);
+        //lvMain.setClickable(true);
+
+        //???
+        //itemList.setLongClickable(true);
+        //ViewById(R.id.last_editTxt);
 
         isUpdate=getIntent().getExtras().getBoolean("update");
         if(isUpdate)

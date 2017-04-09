@@ -1,8 +1,11 @@
 package com.comp4020.listproject;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +31,26 @@ import java.util.List;
 
 public class GroceryListActivity extends AppCompatActivity{
 
-    public static final String SELECTED_ITEMS = "com.comp4020.listproject.MESSAGE";
-
+    //public static final String SELECTED_ITEMS = "com.comp4020.listproject.MESSAGE";
+    String item;
     EditText editItem;
     Button addGroceryButton;
-    ListView lvGrocery;
-    ArrayList<String> items;
-    ArrayAdapter<String> aa;
+    //ListView lvGrocery;
+    //ArrayList<String> items;
+    //ArrayAdapter<String> aa;
+
+    private DBHelper mHelper;
+
+
+    private SQLiteDatabase dataBase;
+    private ArrayList<String> item_name = new ArrayList<String>();
+    private ListView itemList;
+
+    private AlertDialog.Builder build;
+
+    //SearchView sv;
+
+    //String searchItem = "";
 
     ArrayList<String> selectedItems = new ArrayList<String>();
     //List<String> items = new ArrayList<String>();
@@ -43,75 +60,132 @@ public class GroceryListActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_list);
 
-
+        //sv = (SearchView) findViewById(R.id.search);
         editItem = (EditText) findViewById(R.id.edit_item);
+
+        itemList = (ListView) findViewById(R.id.lvGroceryList);
+        itemList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
         addGroceryButton = (Button) findViewById(R.id.add_grocery_button);
-        lvGrocery = (ListView) findViewById(R.id.lvGroceryList);
-        lvGrocery.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        //lvGrocery = (ListView) findViewById(R.id.lvGroceryList);
 
-        items = new ArrayList<String>();
-        aa = new ArrayAdapter<String>(this, R.layout.check_list_item, items);
+        mHelper = new DBHelper(this);
+        //lvMain.setClickable(true);
+        itemList.setLongClickable(true);
+        //items = new ArrayList<String>();
+        //aa = new ArrayAdapter<String>(this, R.layout.check_list_item, items);
 
+        addGroceryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                item = editItem.getText().toString();
+                //name=edit_name.getText().toString().trim();
+                //level=add_spinner.getSelectedItem().toString().trim();
+                saveData();
 
-
-        lvGrocery.setAdapter(aa);
-        //set OnItemClickListener
-        lvGrocery.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // selected item
-                String selectedItem = ((TextView) view).getText().toString();
-                if(selectedItems.contains(selectedItem))
-                    selectedItems.remove(selectedItem); //remove deselected item from the list of selected items
-                else
-                    selectedItems.add(selectedItem); //add selected item to the list of selected items
+                //items.add(item);
+                //aa.notifyDataSetChanged();
+                editItem.setText("");
+                displayData();
 
             }
-
         });
 
+        //long click to delete data
+        itemList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-        lvGrocery.setLongClickable(true);
-        lvGrocery.setItemsCanFocus(true);
-        
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
 
-        lvGrocery.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                itemDelete(position);
+                build = new AlertDialog.Builder(GroceryListActivity.this);
+                build.setTitle("Delete " + item_name.get(arg2));
+                build.setMessage("Do you want to delete ?");
+                build.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Toast.makeText( getApplicationContext(),
+                                item_name.get(arg2) + " is deleted.", Toast.LENGTH_LONG).show();
+
+                        dataBase.delete(
+                                DBHelper.gTB_NAME,
+                                DBHelper.gNAME + "='"
+                                        + item_name.get(arg2)+"'", null);
+                        displayData();
+                        dialog.cancel();
+                    }
+                });
+
+                build.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = build.create();
+                alert.show();
 
                 return true;
             }
         });
-
-
-        /*
-        lvGrocery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String item = items.get(i);
-                Toast.makeText(getApplicationContext(), item, Toast.LENGTH_LONG).show();
-            }
-        });
-*/
-        addGroceryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String item = editItem.getText().toString();
-                items.add(item);
-                aa.notifyDataSetChanged();
-                editItem.setText("");
-
-            }
-        });
-
-
-
-
-
     }
 
+    /**
+     * save data into SQLite
+     */
+    private void saveData(){
+        dataBase=mHelper.getWritableDatabase();
+        ContentValues values=new ContentValues();
+
+        values.put(DBHelper.gNAME,item);
+        //values.put(DBHelper.LEVEL,level );
+
+        //insert data into database
+        dataBase.insert(DBHelper.gTB_NAME, null, values);
+
+        //close database
+        dataBase.close();
+        /*
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                displayData(newText);
+                return false;
+            }
+        });
+    */
+    }
+    @Override
+    protected void onResume() {
+        displayData();
+        super.onResume();
+    }
+    /**
+     * displays data from SQLite
+     */
+    private void displayData() {
+        dataBase = mHelper.getWritableDatabase();
+        Cursor mCursor;
+
+        mCursor = dataBase.rawQuery("SELECT * FROM " + DBHelper.gTB_NAME, null);
+
+        item_name.clear();
+
+        if (mCursor.moveToFirst()) {
+            do {
+                item_name.add(mCursor.getString(mCursor.getColumnIndex(DBHelper.gNAME)));
 
 
+            } while (mCursor.moveToNext());
+        }
+        groceryDisplayAdapter disadpt = new groceryDisplayAdapter(GroceryListActivity.this, item_name);
+        itemList.setAdapter(disadpt);
+        mCursor.close();
+    }
+/*
     public void itemDelete(final int position)
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -140,8 +214,9 @@ public class GroceryListActivity extends AppCompatActivity{
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+*/
 
-    /** Called when the user taps the Add To Grocery List button */
+    //Called when the user taps the Add To Grocery List button
     public void sendSelectedItems(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         //EditText editText = (EditText) findViewById(R.id.edit_item);
@@ -149,17 +224,20 @@ public class GroceryListActivity extends AppCompatActivity{
         //Bundle bundle = new Bundle();
         //bundle.putStringArrayList("SELECTED_ITEMS", selectedItems);
         //intent.putExtra(SELECTED_ITEMS, selectedItems);
-        intent.putExtra("SELECTED_ITEMS", selectedItems);
+        //intent.putExtra("SELECTED_ITEMS", selectedItems);
+        //selectedItems =
+
         startActivity(intent);
     }
 
-    public void addItem(View view){
+/*
+public void addItem(View view){
         EditText edit_item = (EditText) findViewById(R.id.edit_item);
         String item = edit_item.getText().toString();
         items.add(item);
         ListView lvGroceryList = (ListView) findViewById(R.id.lvGroceryList);
         lvGroceryList.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, items));
     }
-
+*/
 
 }
